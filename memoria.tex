@@ -116,25 +116,84 @@ Y es este caso de uso el que necesita adoptar FIT. Actualmente el emisor de los 
 \level{4}{Primas de asistencia}
 También relacionado con los accionistas, el segundo evento a tratar son las primas a los asistentes de las juntas de accionistas. El emisor de este evento definirá un precio que pagara por cada acción que posea el asistente.\par
 
-Al tratarse de un evento simple (a nivel de interfaz), se piensa incluir en la ventana de pagos y cobros. Esta ventana es la encargada de gestionar diferentes fluctuaciones en las posiciones de las carteras gestionadas. Cuando se crea un evento como este, se valida o rechaza desde esta ventana, creando así el flujo de caja correspondiente. 
+Al tratarse de un evento simple (a nivel de interfaz), se piensa incluir en la ventana de pagos y cobros. Esta ventana es la encargada de gestionar diferentes fluctuaciones en las posiciones de las carteras gestionadas. Cuando se crea un evento como este, se valida o rechaza desde esta ventana, creando así el flujo de caja correspondiente.\newpage
 
-\newpage
-
-\level{1}{Actividades realizadas en la empresa}
-\level{2}{Desarrollo de eventos}
-En FIT, se denomina evento a cualquier factor que modifique las posiciones dentro de una cartera o los fondos de un cliente. El ejemplo más claro sería un dividendo, tanto en efectivo como en acciones: modifican las posiciones, y se deben encolar una serie de procesos para el fin de día.\par
-
-La forma de tratar estos eventos es similar en muchos casos, aunque en definición sean diferentes, las entradas y salidas se pueden englobar fácilmente, así que FIT dispone de una ventana (FIT está montado como una aplicación web, y a cada interfaz se le denomina ventana) para interactuar con muchos de ellos de la misma manera, a la que se le llama ventana de "Validación de pagos y cobros". Se puede observar esta ventana en la figura 1. A parte de esta ventana global, cada evento dispone de ventanas para ser definidos y configurados. Por último, también se dispone de ventanas para auditar y revertir éstos procesos.\par
-
-\level{3}{Primas de asistencia}
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{auditoria}
+\includegraphics[width=\textwidth]{cobros_pagos}
 \caption{Ventana de pagos y cobros}
 \end{figure}
 
-El primer evento que se ha tratado ha sido la prima de asistencia, que se explicará a continuación.
+Como se puede observar en la figura 1, la ventana cuenta con un selector de eventos (o cobro o pago, como se le llama en la ventana), y puedes seleccionar varios para confirmarlos de una tacada. Desde el botón de 'Detalle' se pueden hacer ligeras modificaciones previas a la confirmación. También existe la posibilidad de descartarlos, rechazando la propuesta de la aplicación y teniendo que meterlo de forma manual posteriormente.
+
+\level{4}{Prima de emisión}
+Relacionado con los derechos de suscripción, los clientes también solicitan la posibilidad de ejercer una prima de emisión a la hora de darse una ampliación de capital.\par
+
+La prima de emisión es la parte de la aportación que hay que realizar para suscribir una acción o participación que viene dada por diferencia entre su valor de emisión y su valor nominal. En otras palabras: la prima de emisión es la cantidad que hay que pagar para adquirir una acción o participación en el momento de su emisión además de su valor nominal. De esta manera, los accionistas más antiguos conservarán su ventaja manteniendo todos una parte equitativa de la empresa a lo aportado.\newpage
+
+\level{2}{Tareas de mantenimiento}
+FIT es una aplicación que no para de desarrollarse junto con el motor que le brinda un entorno web. La evolución de continua de estos dos hace que los apartados más viejos se vean realmente perjudicados, y por eso se deben hacer varias tareas de mantenimiento de manera constante para cumplir con la promesa de calidad con el cliente. Por ello se han marcado varias ventanas como candidatas a una refactorización.\par
+
+Como se ha comentado anteriormente, el foco de este año ha ido fijado en los eventos sobre posiciones, y es por esto que se ha decidido mejorar varias ventanas relacionadas con estos.\newpage
+
+\level{3}{Ventana de pagos y cobros}
+La ventana anteriormente mencionada, cuenta con diversos eventos que requieren tratos específicos. Como se puede observar en la figura 2, la ventana cuenta con demasiados eventos como para dar un trato específico para cada uno de ellos, por lo que es necesario un trabajo de homogeneización.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.6]{tipo_cobros_pagos}
+\caption{Eventos disponibles en la ventana de pagos y cobros.}
+\end{figure}
+
+Esta labor no cambiará nada a nivel visual, pero se encargará de brindar una navegación mas agradable para el usuario.\newpage
+
+\level{3}{Ventanas de definición de eventos de renta variable}
+La filosofía de Almis respecto al reciclaje de código ha sido el causante de esta necesidad. Como todos los eventos se declaran de manera similar. Siguiendo el afán de reutilización, se optó por crear una ventana genérica para todos los eventos, y gestionar mediante dependencias de AngularJS\footnote{Un motor desarrollado en JavaScript que permite dinamizar las ventanas web.} las diferencias que podían darse, añadiendo coste computacional al navegador.\par
+
+Llegados a cierto punto, esta estrategia ha resultado inviable, puesto que ciertos clientes (debido a la multitud de datos que cotejan) son incapaces de gestionar nada mediante estas ventanas, ya que el navegador no soporta tal carga.\par
+
+A son de este problema, se ha optado por dividir la ventana base en múltiples, tratando cada evento desde la ventana misma y reduciendo las inyecciones de AngularJS.\par
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.3]{ventanas_optimizadas}
+\caption{Menú con las ventanas optimizadas.}
+\end{figure}
+
+Como se puede observar en la figura 4, todas estas ventanas parten de la misma base. Se duplicará el código y se modificará cada caso para habilitar estas ventanas al uso de nuevo.
+
+%---------------------------------------------------------
+
+\level{1}{Actividades realizadas}
+Para enfrentarse al problema descrito, se han realizado las siguientes tareas en los ámbitos de desarrollo y mantenimiento de la aplicación.
+
+\level{2}{Desarrollo de eventos}
+Como se ha mencionado anteriormente, dentro de todos los eventos que recoge o plantea recoger FIT, se ha puesto el foco en tres. Estos son los desarrollos que se han realizado para cada uno para ofrecer una solución a las necesidades de los clientes.\par
+
+\level{3}{Primas de asistencia}
+La gestión de las primas de asistencia ha sido desarrollada desde cero. Como se ha mencionado en el planteamiento del problema, la ventana de pagos y cobros ha sido la elegida de albergar esta funcionalidad, así que lo primero que se ha hecho es compatibilizar la tabla de la base de datos que refleja esta ventana.\par
+
+Los datos se separan en dos tablas: una que recoge los datos generales del evento, como fecha de vencimiento, importe de la prima o datos del emisor; y otra que guarda temporalmente los detalles del evento y se calcula y rellena en tiempo de ejecución.\par
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{primas_asistencia}
+\caption{Listado de primas de asistencia.}
+\end{figure}
+
+Tras validar que ambas tablas son aptas para el desarrollo, se ha pasado a la parte de visualización. Como se ha mencionado, la visualización conlleva una serie de cálculos que ofrecen detalles sobre el evento, como retenciones y comisiones, junto con el efectivo neto. Se ve más claro en el ejemplo de las figuras 4 y 5.\par
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{detalle_primas_asistencia}
+\caption{Detalles de las primas de asistencia.}
+\end{figure}
+
+Una vez conseguido visualizar los datos, se pasa a la ejecución o confirmación del evento. Esto se realiza mediante una función de C donde se calculan los flujos que va a generar esta operación, y se dejan almacenados en una tabla de la base de datos. Esto se hace así porque los resultados se calculan al final del día, junto con el resto de cálculos.\par
+
 \level{3}{Primas de emisión}
+Las primas de
+
 \level{3}{Derechos de suscripción}
 \level{2}{Optimización de ventanas}
 

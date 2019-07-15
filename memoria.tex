@@ -32,12 +32,7 @@
 \end{titlepage}
 
 \section*{Resumen del trabajo}
-El trabajo realizado en Almis Informática Financiera S.L. (referido como Almis en
-adelante) ha tratado sobre la ampliación de las funcionalidades de una aplicación
-financiera. En concreto, se ha trabajado en el apartado de tratamiento de eventos
-sobre renta variable que dispone la ampliación. En el documento se detallarán los
-los siguientes apartados: definición del problema, las actividades realizadas, las
-conclusiones y las competencias trabajadas.
+El trabajo realizado en Almis Informática Financiera S.L. (referido como Almis en adelante) ha tratado sobre la ampliación de las funcionalidades de una aplicación financiera. En concreto, se ha trabajado en el apartado de tratamiento de eventos sobre renta variable que dispone la ampliación. En el documento se detallarán los siguientes apartados: definición del problema, las actividades realizadas, las conclusiones y las competencias trabajadas.
 \newpage
 
 \tableofcontents
@@ -53,7 +48,17 @@ El apartado del desarrollo esta enfocado de cara a cliente. Este manda peticione
 El apartado de mantenimiento, en cambio, se centra en el departamento de QoS\footnote{\emph{Quality of Service}. Del inglés, ofrecer un servicio de calidad.}. FIT es una herramienta que ha crecido mucho, y a medida que se añaden procesos, el cómputo general se ralentiza cada vez más. Esto provoca una mala experiencia de usuario, y en FIT se trabaja para que esto suceda lo menos a menudo posible.
 
 \subsection{Desarrollos}
-La demanda de este año ha ido enfocado a un robusto módulo de gestión de eventos. Los clientes quieren automatizar cada vez más evento relacionados principalmente con la renta variable. Debido al aumento de inversores de pequeña escala gracias a las aplicaciones de trading, los clientes se enfrentan a una demanda mayor de eventos sobre las acciones de los clientes.
+La demanda de este año ha ido enfocado a un robusto módulo de gestión de eventos. Los clientes quieren automatizar cada vez más eventos relacionados principalmente con la renta variable. Debido al aumento de inversores de pequeña escala gracias a las aplicaciones de trading, los clientes se enfrentan a una demanda mayor de eventos sobre las acciones de los clientes.\par
+
+Estos desarrollos, al ser principalmente cálculos realizados cuando las carteras pasan de día\footnote{Cuando una cartera pasa de día se calculan los resultados de las operaciones que vencen a dicha fecha, y se actualiza su posición en base a ello.}, se componen de tareas relacionadas con el back-end\footnote{Parte de la aplicación web que no visible, encargado de cálculos y gestión de los datos.}, siendo el front-end\footnote{Parte de la aplicación web que visualiza el usuario, con una carga lógica mínima.} casi idéntico. Por este motivo, plantea añadir los nuevos eventos a una ventana web ya en uso para eventos similares.\newpage
+
+\subsubsection{Eventos}
+Tras reuniones con clientes, se ha optado por priorizar 3 eventos, uno de los cuales necesita ser mejorado y otros dos que deben ser desarrollados desde cero.
+
+\paragraph{Derechos de suscripción}
+Este evento es el que esta desarrollado parcialmente. La implementación se hizo para salir del paso en su momento, y ahora se quiere mejorar porque el uso ha aumentado.\par
+
+Se trata de 
 
 
 \newpage
@@ -64,6 +69,7 @@ En FIT, se denomina evento a cualquier factor que modifique las posiciones dentr
 
 La forma de tratar estos eventos es similar en muchos casos, aunque en definición sean diferentes, las entradas y salidas se pueden englobar fácilmente, así que FIT dispone de una ventana (FIT está montado como una aplicación web, y a cada interfaz se le denomina ventana) para interactuar con muchos de ellos de la misma manera, a la que se le llama ventana de "Validación de pagos y cobros". Se puede observar esta ventana en la figura 1. A parte de esta ventana global, cada evento dispone de ventanas para ser definidos y configurados. Por último, también se dispone de ventanas para auditar y revertir éstos procesos.\par
 
+\subsubsection{Primas de asistencia}
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{auditoria}
@@ -71,8 +77,6 @@ La forma de tratar estos eventos es similar en muchos casos, aunque en definici�
 \end{figure}
 
 El primer evento que se ha tratado ha sido la prima de asistencia, que se explicará a continuación.
-
-\subsubsection{Primas de asistencia}
 \subsubsection{Primas de emisión}
 \subsubsection{Derechos de suscripción}
 \subsection{Optimización de ventanas}

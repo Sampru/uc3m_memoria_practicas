@@ -110,7 +110,7 @@ Este evento es el que esta desarrollado parcialmente. La implementación se hizo
 
 Este evento sucede cuando una empresa decide hacer una ampliación, para evitar que el porcentaje de participación de un accionista caiga o diluya. Para ello, los accionistas cambian sus posiciones a derechos. De esta manera, tienen una posición temporal mientras se amplia el capital. Al terminar, los derechos se transforman de nuevo en acciones, en este caso en las nuevas acciones, con el porcentaje que tendría el accionista en el estado actual. Los derechos de suscripción son instrumentos comerciables. Se pueden vender en el mercado como si fueran acciones; recibir dividendos; o venderlos al emisor, que es en lo que se diferencian principalmente a las acciones.\par
 
-Y es este caso de uso el que necesita adoptar FIT. Actualmente el emisor de los derechos no puede establecer un precio al cual se venderán las acciones de los interesados en una fecha dada, por lo que se requiere un desarrollo sobre el código que ya está en producción. Aprovechando esto, también se retocara la ventana, ya que como se ha mencionado anteriormente, se hizo con poco detalle para salir de paso.\par
+Y es este caso de uso el que necesita adoptar FIT. Actualmente el emisor de los derechos no puede establecer un precio al cual se venderán las acciones de los interesados en una fecha dada, por lo que se requiere un desarrollo sobre el código que ya está en producción. Aprovechando esto, también se retocara la ventana, ya que como se ha mencionado anteriormente, se hizo con poco detalle para salir de paso.
 
 
 \level{4}{Primas de asistencia}
@@ -200,13 +200,42 @@ Por último, el principal funcionamiento para esta ventana es que los eventos se
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{auditoria}
-\caption{Auditoria del cobro, y botón de deshacerlo.}
+\caption{Auditoría del cobro, y botón de deshacerlo.}
 \end{figure}
+\newpage
 
 \level{3}{Primas de emisión}
-Las primas de
+Las primas de emisión son muy parecidas a las primas de asistencia, computacionalmente. Como se ha mencionado en el planteamiento del problema, se ha metido también en la ventana de cobros y pagos, por motivos similares a las primas de asistencia.\par
+
+A nivel visual, la única diferencia que encontramos con las primas de asistencia es que estas no llevan ningún tipo de retención, por lo que la ventana de detalle es mas simple que los anteriores eventos.\par
+
+También dispone de una ventana de auditoría, en la que se pueden deshacer las confirmaciones, ya que estos también están pensados para ser confirmados en masa.\newpage
 
 \level{3}{Derechos de suscripción}
+La parte de derechos de suscripción que se ha tenido que desarrollar es el llamado 'scrip dividend', o dividendo opcional. Cuando se desea realizar una ampliación de capital, la entidad emisora da la opción de comprar todos los derechos que no se deseen, para facilitar la venta a sus accionistas. De esta manera, y por un precio fijado, se apropia de derechos que luego venderá como nuevas acciones para acaparar más accionistas.
+
+La ventana actual de los derechos de suscripción cuenta con dos botones para la asignación y conversión, así que se añade uno nuevo para la venta, como se observa en la figura 7.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{derechos_suscripcion}
+\caption{Ventana de gestión de derechos de suscripción.}
+\end{figure}
+
+\newpage
+A parte de esto, también se deben crear nuevos campos en el dialogo de creación, ya que el usuario puede definir el precio indicado por la empresa emisora. Con los nuevos campos quedaría de la manera que se ve en la figura 8.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{definicion_derechos_suscripcion}
+\caption{Creación de derechos de suscripción.}
+\end{figure}
+
+La venta al emisor se ha desarrollado siguiendo el ejemplo de la conversión. A nivel algorítmico, la conversión trata de una venta a precio 0 de los derechos, y una compra a precio 0 de las nuevas acciones. Lo que se ha hecho para esta nueva funcionalidad ha sido coger la venta de derechos y añadirle el precio. Con esto, similar a los otros dos eventos, se genera un flujo de caja que se liquida mediante batches\footnote{Scripts escritos en el lenguaje batch de Windows} nocturnos.\par
+
+Para realizar este desarrollo, se ha tenido que tocar también la parte de las conversión, ya que la funcionalidad actual solo permitía la confirmación en masa, sin dar opción a elegir que se quería convertir y que no. Ahora se pueden seleccionar las líneas que quieras convertir o vender.
+\newpage
+
 \level{2}{Optimización de ventanas}
 
 

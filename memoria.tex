@@ -145,7 +145,7 @@ La ventana anteriormente mencionada, cuenta con diversos eventos que requieren t
 \caption{Eventos disponibles en la ventana de pagos y cobros.}
 \end{figure}
 
-Esta labor no cambiará nada a nivel visual, pero se encargará de brindar una navegación mas agradable para el usuario.\newpage
+Esta labor no cambiará nada a nivel visual, pero se encargará de brindar una navegación más agradable para el usuario.\newpage
 
 \level{3}{Ventanas de definición de eventos de renta variable}
 La filosofía de Almis respecto al reciclaje de código ha sido el causante de esta necesidad. Como todos los eventos se declaran de manera similar. Siguiendo el afán de reutilización, se optó por crear una ventana genérica para todos los eventos, y gestionar mediante dependencias de AngularJS\footnote{Un motor desarrollado en JavaScript que permite dinamizar las ventanas web.} las diferencias que podían darse, añadiendo coste computacional al navegador.\par
@@ -190,6 +190,18 @@ Tras validar que ambas tablas son aptas para el desarrollo, se ha pasado a la pa
 \end{figure}
 
 Una vez conseguido visualizar los datos, se pasa a la ejecución o confirmación del evento. Esto se realiza mediante una función de C donde se calculan los flujos que va a generar esta operación, y se dejan almacenados en una tabla de la base de datos. Esto se hace así porque los resultados se calculan al final del día, junto con el resto de cálculos.\par
+
+La teoría de este calculo es el siguiente: se parte de la prima, y se recogen todas las posiciones de una cartera; se multiplica para saber el bruto, y de ese bruto se extraen las retenciones que tendrá para calcular el neto, por ultimo, con los demás datos se crean los flujos de caja y se almacenan en la base de datos.\par
+
+Al igual que un cobro se puede aceptar, también se tiene que poder cancelar, así que también se necesita esa implementación. Esta parte del desarrollo es bastante más sencilla debido al modelo de datos. Simplemente se almacena toda la información para posterior auditoría, y se marca como cancelado en la base de datos.\par
+
+Por último, el principal funcionamiento para esta ventana es que los eventos sean confirmados en masa así que es común tener que deshacer alguno. Por lo tanto, se ha desarrollado una ventana que recoge la información del evento confirmado. En la figura 6 se puede observar como es la ventana para dicho funcionamiento. El proceso es parecido a la confirmación, solo que se mete un flujo inverso para neutralizar el anterior. Esto cuando se realice la liquidación será transparente.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{auditoria}
+\caption{Auditoria del cobro, y botón de deshacerlo.}
+\end{figure}
 
 \level{3}{Primas de emisión}
 Las primas de

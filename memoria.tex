@@ -66,19 +66,27 @@
 
 \setlength{\parskip}{1em}
 
-\title{
-   Almis Informática Financiera S.L.\\
-    \textbf{Memoria de prácticas}
-}
-\author{
-    Asier Sampietro Alberdi\\
-    Tutor: José Manuel Nuñez
-}
-\date{28 de marzo, 2019}
-
 \begin{document}
 \begin{titlepage}
-\maketitle
+  \centering
+  \includegraphics[scale=0.35]{titulo1} \\
+  \vspace*{1cm}
+  \huge
+  Máster Universitario en Tecnologías de la Computación Aplicadas al Sector Financiero\par
+  \LARGE
+  Curso académico 2018/2019\par
+  Memoria de Prácticas académicas en empresa\par
+  \Large
+  \raggedright
+  Título: Desarrollo y mantenimiento del aplicativo FIT\\
+  Empresa: Almis Informática Financiera, S.L.\\
+  Tutor en la empresa: José Manuel Núñez Fernández\\
+  Tutor académico en la Universidad:  María Paula De Toledo Heras\\
+  14 de Julio de 2019\par
+  \centering
+  \includegraphics[width=\textwidth]{titulo2}\\
+
+
 \end{titlepage}
 
 \section*{Resumen del trabajo}
@@ -148,7 +156,7 @@ La ventana anteriormente mencionada, cuenta con diversos eventos que requieren t
 Esta labor no cambiará nada a nivel visual, pero se encargará de brindar una navegación más agradable para el usuario.\newpage
 
 \level{3}{Ventanas de definición de eventos de renta variable}
-La filosofía de Almis respecto al reciclaje de código ha sido el causante de esta necesidad. Como todos los eventos se declaran de manera similar. Siguiendo el afán de reutilización, se optó por crear una ventana genérica para todos los eventos, y gestionar mediante dependencias de AngularJS\footnote{Un motor desarrollado en JavaScript que permite dinamizar las ventanas web.} las diferencias que podían darse, añadiendo coste computacional al navegador.\par
+La filosofía de Almis respecto al reciclaje de código ha sido el causante de esta necesidad. Como todos los eventos se declaran de manera similar. Siguiendo el afán de reutilización, se optó por crear una ventana genérica para todos los eventos, y gestionar mediante dependencias\footnote{Eventos de la ventana que desecadenan acciones.} de AngularJS\footnote{Un motor desarrollado en JavaScript que permite dinamizar las ventanas web.} las diferencias que podían darse, añadiendo coste computacional al navegador.\par
 
 Llegados a cierto punto, esta estrategia ha resultado inviable, puesto que ciertos clientes (debido a la multitud de datos que cotejan) son incapaces de gestionar nada mediante estas ventanas, ya que el navegador no soporta tal carga.\par
 
@@ -231,14 +239,67 @@ A parte de esto, también se deben crear nuevos campos en el dialogo de creació
 \caption{Creación de derechos de suscripción.}
 \end{figure}
 
-La venta al emisor se ha desarrollado siguiendo el ejemplo de la conversión. A nivel algorítmico, la conversión trata de una venta a precio 0 de los derechos, y una compra a precio 0 de las nuevas acciones. Lo que se ha hecho para esta nueva funcionalidad ha sido coger la venta de derechos y añadirle el precio. Con esto, similar a los otros dos eventos, se genera un flujo de caja que se liquida mediante batches\footnote{Scripts escritos en el lenguaje batch de Windows} nocturnos.\par
+La venta al emisor se ha desarrollado siguiendo el ejemplo de la conversión. A nivel algorítmico, la conversión trata de una venta a precio 0 de los derechos, y una compra a precio 0 de las nuevas acciones. Lo que se ha hecho para esta nueva funcionalidad ha sido coger la venta de derechos y añadirle el precio. Con esto, similar a los otros dos eventos, se genera un flujo de caja que se liquida mediante batches\footnote{Scripts escritos en el lenguaje batch de Windows para ejecuciones automatizadas} nocturnos.\par
 
 Para realizar este desarrollo, se ha tenido que tocar también la parte de las conversión, ya que la funcionalidad actual solo permitía la confirmación en masa, sin dar opción a elegir que se quería convertir y que no. Ahora se pueden seleccionar las líneas que quieras convertir o vender.
 \newpage
 
 \level{2}{Optimización de ventanas}
-Para la optimización de ventanas se ha 
+La optimización de ventanas también ha ido enfocado al modulo de eventos, código que se ha tocado anteriormente. El problema es similar en los dos casos que se han tratado: el afán por reutilizar ha acabado sobrecargando la ventana.
 
+\level{3}{Ventana de cobros y pagos}
+Como se viene diciendo en todo el documento, esta ventana tiene demasiadas eventos gestionados de manera similar. Tanto la interfaz gestionada por AngularJS, como el back-end de C esta demasiado saturado de bombas lógicas\footnote{Se refiere a bomba lógica cuando dos instrucciones se contradicen y su comportamiento no esta definido} que ralentizan los procesos.\par
 
+Para dar mas agilidad a las ventanas, se ha pasado por un proceso de detección de cuellos de botella. Se han añadido marcas temporales en los procesos para identificar las zonas más lentas. También se ha hecho una inspección de trazas web para detectar bombas lógicas, detectando casi un centenar de ellas.\par
 
+Primero se ha procedido a limpiar la interfaz web, simplificando y unificando dependencias que se han ido añadiendo en cada desarrollo, desde un punto de vista mas global. Esto pese a ser relativamente simple, ofrece ya una mejora notable consiguiendo una navegación más fluida y menor carga de navegador. Además, se puede contrastar fácilmente con testeos de interfaz.\par
+
+Después, se ha procedido a modificar el algoritmo, ya que gracias a las mediciones se han detectado bucles y cargas de datos innecesarios. El principal objetivo ha sido reducir peticiones a la base de datos. Optimizando bucles y reduciendo las lecturas y escrituras se ha conseguido acelerar en un 15\% el calculo.\newpage
+
+\level{3}{Ventanas de definición de eventos de renta variable}
+Estas ventanas parten todas de la misma raíz, y se llenaban de dependencias partiendo de un identificador que se cargaba al cargar la página. Esto causaba que todas las dependencias saltasen a la vez y el navegador no respondiera por quedarse sin memoria. Para evitar esto, se ha creado una página para cada uno de los eventos afectados. Se ha leído la definición del evento y que es lo que necesita, para eliminar y reducir las dependencias a las mínimas. Las ventanas han vuelto a ser usables gracias a la especificación.\newpage
+
+\level{1}{Competencias generales el máster}
+Realizando estas prácticas, se han obtenido las siguientes competencias:
+\begin{itemize}
+  \item Mercados Financieros:
+  \begin{itemize}
+    \item Al desarrollar funcionalidades para distintos tipos de eventos de renta variable, se ha adquirido conocimiento sobre los cálculos que se realizan para valorar dichos eventos.
+    \item Al descomponer eventos para separar ventanas, se ha adquirido conocimiento sobre componentes de eventos de renta variable.
+  \end{itemize}
+  \item Tecnologías Aplicadas a los Mercados Financieros:
+  \begin{itemize}
+    \item Se han realizado mediciones de tiempos y análisis de cuellos de botella, y se ha aprendido a solventarlos.
+    \item Se ha comprendido la diferencia de coste de lecturas a memoria o bases de datos.
+  \end{itemize}
+  \item Desarrollo de Software Financiero:
+  \begin{itemize}
+    \item Se ha comprendido las necesidades de escalabilidad que tiene el software financiero, al ver a la cantidad de carga que se enfrenta.
+    \item Se ha obtenido una visión de lo que es trabajar en una aplicación financiera con varios grandes módulos.
+  \end{itemize}
+\end{itemize}
+\newpage
+
+\level{1}{Conclusiones}
+Con este trabajo se ha tenido la primera toma de contacto con el mundo financiero, y partiendo de eso se han sacado las siguientes conclusiones referentes al apartado técnico tanto como a lo metodológico.
+\level{2}{Conclusiones técnicas}
+Referente a lo técnico, se han cumplido los objetivos planteados.\par
+
+Se quería dar un impulso al modulo de eventos, y se han añadido 3 nuevas funcionalidades que complementan los ya presentes. Con esto la aplicación es cada vez más independiente y sin necesidad de terceros, camino a dar una solución más completa.\par
+
+También se ha conseguido optimizar ciertos apartados, dando confianza al cliente de manera que vea mejoría constante. Siendo ventanas usadas constantemente, el poder ahorrar minutos de trabajo es algo que las empresas lo suelen agradecer.
+
+\level{2}{Conclusiones metodológicas}
+Respecto a la metodología, se ha visto un claro ejemplo de obsolescencia en cuanto a reglas, estilos y metodología de desarrollo. La falta de planificación en un pasado ha acarreado graves problemas a día de hoy.\par
+
+Por ello se ha puesto un especial foco en conseguir soluciones robustas y no hacer chapuzas para salir de paso. Todo le que se ha generado ha ido estrictamente justificado y documentado, para evitar futuros problemas de este calibre.\par
+
+\newpage
+\level{1}{Bibliografía}
+\begin{itemize}
+  \item Almis Informática Financiera S.L., 1994. FIT. [En línea] \\ Disponible en: http://www.almis.com/es/tesoreria
+  \item Almis Informática Financiera S.L., 1994. FIT FMB. [En línea] \\ Disponible en: http://demo.almis.com/FMB\_V0.0
+  \item Almis Informática Financiera S.L., 2016. AWE Wiki. [En línea] \\ Disponible en: https://git.almis.com/awe-team/awe/wikis/home
+  \item Almis Informática Financiera S.L., 2016. Selenium IDE Wiki. [En línea] \\ Disponible en: https://git.almis.com/awe-team/awe/wikis/selenium-3.1
+\end{itemize}
 \end{document}
